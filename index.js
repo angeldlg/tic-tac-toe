@@ -8,15 +8,22 @@ const player = (name, marker) => {
 const Game = (() => {
   const restart = document.querySelector('[data-restart]')
   const status = document.querySelector('[data-status]')
-  const player1 = player('cross', 'x')
   const player2 = player('circle', 'o')
-  status.textContent = `current turn: cross`
+  const player1 = player('cross', 'x')
+  let currentPlayer = player1
+  let gameOver = false
   restart.textContent = `restart`
-  let currentPlayer = player2
+  status.textContent = `current turn: cross`
   //
 
+  const getGameOver = () => gameOver
+
   restart.addEventListener('mousedown', () => {
-    Gameboard.reset(currentPlayer)
+    status.textContent = `current turn: cross`
+    currentPlayer = player1
+    gameOver = false
+    Gameboard.reset()
+    Gameboard.render()
   })
 
   function updateTurn() {
@@ -29,6 +36,7 @@ const Game = (() => {
   }
 
   function checkWinner() {
+    const board = Gameboard.get()
     const winCombos = [
       [0, 1, 2],
       [3, 4, 5],
@@ -43,7 +51,7 @@ const Game = (() => {
 
     return winCombos.some((combo) => {
       return combo.every((index) => {
-        return Gameboard.board[index] === currentPlayer.marker
+        return board[index] === currentPlayer.marker
       })
     })
   }
@@ -51,12 +59,17 @@ const Game = (() => {
   function updateStatus() {
     if (checkWinner()) {
       status.textContent = `${currentPlayer.name} wins`
+      gameOver = true
     } else if (!checkWinner()) {
       status.textContent = `current turn: ${currentPlayer.name}`
     }
   }
 
-  return { player1, currentPlayer, status, updateTurn, checkWinner, updateStatus }
+  function getPlayer() {
+    return currentPlayer
+  }
+
+  return { player1, updateTurn, checkWinner, updateStatus, getPlayer, getGameOver }
 })()
 //
 
@@ -67,38 +80,36 @@ const Gameboard = (() => {
 
   cells.forEach((cell, index) => {
     cell.addEventListener('mousedown', () => {
-      if (!Game.checkWinner()) {
+      //
+      if (!Game.getGameOver()) {
         handleClick(index)
       }
     })
   })
 
   function handleClick(i) {
-    const currentPlayer = Game.updateTurn()
-    //
-
     if (board[i] === '') {
-      board[i] = currentPlayer.marker
+      board[i] = Game.getPlayer().marker
     }
     Game.updateStatus()
-    update()
+    Game.updateTurn()
+    render()
   }
 
-  function update() {
+  function render() {
     cells.forEach((cell, index) => {
       cell.innerHTML = board[index]
     })
   }
 
-  function reset(c) {
-    if (c === Game.player1) {
-      Game.updateTurn()
-    }
+  function reset() {
     board = new Array(9).fill('')
-    Game.status.textContent = `current turn: cross`
-    update()
   }
 
-  return { board, reset }
+  function get() {
+    return board
+  }
+
+  return { render, reset, get }
 })()
 //
