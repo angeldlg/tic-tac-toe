@@ -69,7 +69,7 @@ const Game = (() => {
     return currentPlayer
   }
 
-  return { player1, updateTurn, checkWinner, updateStatus, getPlayer, getGameOver }
+  return { updateTurn, updateStatus, getPlayer, getGameOver }
 })()
 //
 
@@ -80,7 +80,6 @@ const Gameboard = (() => {
 
   cells.forEach((cell, index) => {
     cell.addEventListener('mousedown', () => {
-      //
       if (!Game.getGameOver()) {
         handleClick(index)
       }
@@ -90,9 +89,9 @@ const Gameboard = (() => {
   function handleClick(i) {
     if (board[i] === '') {
       board[i] = Game.getPlayer().marker
+      Game.updateTurn()
+      Game.updateStatus()
     }
-    Game.updateStatus()
-    Game.updateTurn()
     render()
   }
 
