@@ -27,7 +27,7 @@ body {
 	flex-flow: column;
 	display: flex;
 	height: 100vh;
-	gap: 1.5em;
+	gap: clamp(10px, 10vh, 20px);
 
 	background-color: var(--graypalette1);
 	color: var(--graypalette5);
@@ -99,19 +99,19 @@ section {
 	align-items: center;
 	flex-flow: column;
 	display: flex;
-	gap: 1em;
+	gap: 10px;
 }
 
 section button {
-	aspect-ratio: 2.5 / 1;
-	max-width: 5em;
-	width: 100vw;
+	aspect-ratio: 2.75 / 1;
+	font-size: clamp(15px, 10vw, 1em);
+	width: clamp(80px, 50vw, 125px);
 
 	box-shadow: 0 7px 0 0 var(--warmerpalette3);
-	background-color: var(--warmerpalette2);
 	border: 3px solid var(--warmerpalette3);
+	background-color: var(--warmerpalette2);
 	color: var(--graypalette3);
-	border-radius: .75em;
+	border-radius: 12px;
 	font-weight: 500;
 
 	transition: all 300ms cubic-bezier(0.3, 0.7, 0.4, 1.5);
@@ -130,7 +130,7 @@ section button:active {
 }
 
 .bottom {
-	height: 1em;
+	width: clamp(55px, 25vw, 100px);
 }
 
 p {
@@ -138,5 +138,5 @@ p {
 	align-items: center;
 	justify-content: center;
 
-	width: 100px;
+	font-size: clamp(15px, 5vw, 1em);
 }
