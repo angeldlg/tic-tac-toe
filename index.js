@@ -1,43 +1,59 @@
-const player = (name, marker) => {
-  marker = marker === 'o' ? '<i class="circle"></i>' : marker === 'x' ? '<i class="cross"></i>' : undefined
+'use strict'
 
+const Player = (name, marker) => {
+  marker = marker === 'o' ? '<i class="circle"></i>' : marker === 'x' ? '<i class="cross"></i>' : undefined
   return { name, marker }
 }
-//
 
-const Game = (() => {
-  const restart = document.querySelector('[data-restart]')
-  const status = document.querySelector('[data-status]')
-  const player2 = player('circle', 'o')
-  const player1 = player('cross', 'x')
-  let currentPlayer = player1
-  let gameOver = false
-  restart.textContent = `restart`
-  status.textContent = `current turn: cross`
+const board = (() => {
+  let board = new Array(9).fill('')
   //
 
-  const getGameOver = () => gameOver
+  function set(index, marker) {
+    board[index] = marker
+  }
 
-  restart.addEventListener('mousedown', () => {
-    status.textContent = `current turn: cross`
-    currentPlayer = player1
-    gameOver = false
-    Gameboard.reset()
-    Gameboard.render()
-  })
+  function get() {
+    return board
+  }
 
-  function updateTurn() {
-    if (currentPlayer === player1) {
-      currentPlayer = player2
-    } else if (currentPlayer === player2) {
-      currentPlayer = player1
-    }
-    return currentPlayer
+  function reset() {
+    board = new Array(9).fill('')
+  }
+
+  return { set, get, reset }
+})()
+//
+
+const game = (() => {
+  const player1 = Player('cross', 'x')
+  const player2 = Player('circle', 'o')
+  let round = 1
+  let is_over
+  //
+
+  function currPlayer() {
+    return round % 2 === 1 ? player1 : player2
+  }
+
+  function updateRound() {
+    round++
+  }
+
+  function reset() {
+    round = 1
+  }
+
+  function stop(won) {
+    return (is_over = won)
+  }
+
+  function over() {
+    return is_over
   }
 
   function checkWinner() {
-    const board = Gameboard.get()
-    const winCombos = [
+    const win_combos = [
       [0, 1, 2],
       [3, 4, 5],
       [6, 7, 8],
@@ -49,66 +65,66 @@ const Game = (() => {
     ]
     //
 
-    return winCombos.some((combo) => {
+    return win_combos.some((combo) => {
       return combo.every((index) => {
-        return board[index] === currentPlayer.marker
+        return board.get()[index] === currPlayer().marker
       })
     })
   }
 
-  function updateStatus() {
-    if (checkWinner()) {
-      status.textContent = `${currentPlayer.name} wins`
-      gameOver = true
-    } else if (!checkWinner()) {
-      status.textContent = `current turn: ${currentPlayer.name}`
-    }
-  }
-
-  function getPlayer() {
-    return currentPlayer
-  }
-
-  return { updateTurn, updateStatus, getPlayer, getGameOver }
+  return { currPlayer, updateRound, checkWinner, reset, over, stop }
 })()
 //
 
-const Gameboard = (() => {
+const display = (() => {
+  const restart_button = document.querySelector('[data-restart]')
   const cells = document.querySelectorAll('[data-cell]')
-  let board = new Array(9).fill('')
   //
 
   cells.forEach((cell, index) => {
     cell.addEventListener('mousedown', () => {
-      if (!Game.getGameOver()) {
-        handleClick(index)
-      }
+      if (cell.innerHTML !== '') return
+      handleClick(index)
     })
   })
 
+  restart_button.addEventListener('mousedown', () => {
+    game.stop(false)
+    board.reset()
+    game.reset()
+    status()
+    render()
+  })
+
+  function status(won) {
+    const status = document.querySelector('[data-status]')
+    //
+
+    if (won) {
+      status.innerHTML = `${game.currPlayer().marker}won`
+    } else {
+      status.innerHTML = `${game.currPlayer().marker}turn`
+    }
+  }
+
   function handleClick(i) {
-    if (board[i] === '') {
-      board[i] = Game.getPlayer().marker
-      Game.updateTurn()
-      Game.updateStatus()
+    board.set(i, game.currPlayer().marker)
+    if (game.over()) return
+    if (game.checkWinner()) {
+      game.stop(true)
+      status(true)
+    }
+    game.updateRound()
+    if (!game.over()) {
+      status()
     }
     render()
   }
 
   function render() {
     cells.forEach((cell, index) => {
-      cell.innerHTML = board[index]
+      cell.innerHTML = board.get()[index]
     })
   }
-
-  function reset() {
-    board = new Array(9).fill('')
-  }
-
-  function get() {
-    return board
-  }
-
-  return { render, reset, get }
 })()
 //

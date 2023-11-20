@@ -34,6 +34,7 @@ body {
 }
 
 .cross {
+	display: inline-block;
 	background-image: url(icons/close.svg);
 	background-size: 100%;
 
@@ -43,6 +44,7 @@ body {
 }
 
 .circle {
+	display: inline-block;
 	background-image: url(icons/circle.svg);
 	background-size: 100%;
 
@@ -129,4 +131,12 @@ section button:active {
 
 .bottom {
 	height: 1em;
+}
+
+p {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	width: 100px;
 }
