@@ -65,7 +65,7 @@ main {
 	grid-template-rows: repeat(3, 1fr);
 	place-items: center;
 	display: grid;
-	padding: 2%;
+	padding: 1.5%;
 	gap: 4%;
 }
 
