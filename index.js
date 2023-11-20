@@ -113,9 +113,9 @@ const display = (() => {
 
     // Update the game status message based on the game state
     if (won) {
-      status.innerHTML = `${game.currPlayer().marker} won`;
+      status.innerHTML = `${game.currPlayer().marker}won`;
     } else {
-      status.innerHTML = `${game.currPlayer().marker}'s turn`;
+      status.innerHTML = `${game.currPlayer().marker}turn`;
     }
   }
 
