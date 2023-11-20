@@ -143,3 +143,29 @@ const display = (() => {
     })
   }
 })()
+
+const darkMode = (() => {
+  const button = document.querySelector('[data-mode]')
+  const root = document.documentElement
+  let light_mode
+
+  button.addEventListener('mousedown', () => {
+    if (light_mode) {
+      light_mode = false
+      root.style.setProperty('--cell-hover', 'brightness(125%)')
+      root.style.setProperty('--marks-color', '')
+      root.style.setProperty('--background-color', '#121212')
+      root.style.setProperty('--border-color', '#404040')
+      root.style.setProperty('--cell-color', '#181818')
+      root.style.setProperty('--text-color', '#ffffff')
+    } else {
+      light_mode = true
+      root.style.setProperty('--cell-hover', 'brightness(90%)')
+      root.style.setProperty('--marks-color', 'brightness(0%)')
+      root.style.setProperty('--background-color', '#ffffff')
+      root.style.setProperty('--border-color', '#c9c9c9')
+      root.style.setProperty('--cell-color', '#eeeeee')
+      root.style.setProperty('--text-color', '#404040')
+    }
+  })
+})()
